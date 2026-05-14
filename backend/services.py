@@ -1,13 +1,15 @@
+# pyrefly: ignore [missing-import]
 import stripe
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
-from database import User, Movie, Seat, Reservation
-from auth import get_password_hash, verify_password, create_reset_token
+from backend.database import User, Movie, Seat, Reservation
+from backend.auth import get_password_hash, verify_password, create_reset_token
 
 import os
 try:
+    # pyrefly: ignore [missing-import]
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:

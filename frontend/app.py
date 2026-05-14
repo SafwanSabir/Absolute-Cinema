@@ -1,10 +1,11 @@
+# pyrefly: ignore [missing-import]
 import streamlit as st
 import base64
-from database import SessionLocal, User
-import services
-import ui_pages
+from backend.database import SessionLocal, User, Reservation
+from backend import services
+from frontend import ui_pages
 
-st.set_page_config(page_title="Absolute Cinema", page_icon="tab-transparent.png", layout="wide")
+st.set_page_config(page_title="Absolute Cinema", page_icon="assets/tab-transparent.png", layout="wide")
 
 # Custom CSS for premium aesthetics
 st.markdown("""
@@ -68,7 +69,6 @@ try:
         
         if res_id:
             # Restore the user's session
-            from database import Reservation
             reservation = db.query(Reservation).filter(Reservation.id == int(res_id)).first()
             if reservation:
                 st.session_state.user_id = reservation.user_id
@@ -110,7 +110,7 @@ try:
         return base64.b64encode(data).decode()
         
     try:
-        logo_b64 = get_base64_of_bin_file("AC-logo-c.jpg")
+        logo_b64 = get_base64_of_bin_file("assets/AC-logo-c.jpg")
         header_html = f'<div class="main-header"><img src="data:image/jpeg;base64,{logo_b64}" style="max-width: 230px; height: auto; margin: 10px 0; mix-blend-mode: screen; filter: invert(1); object-fit: contain;" /></div>'
     except FileNotFoundError:
         header_html = '<div class="main-header"><h1>Absolute Cinema</h1></div>'

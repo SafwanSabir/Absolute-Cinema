@@ -1,7 +1,9 @@
+# pyrefly: ignore [missing-import]
 import streamlit as st
 from datetime import datetime, timedelta, timezone
+# pyrefly: ignore [missing-import]
 import streamlit.components.v1 as components
-import services
+from backend import services
 
 def render_home(db, go_to_page):
     st.header("Now Showing")
@@ -94,7 +96,7 @@ def render_reset_password(db, go_to_page, token):
         with st.container(border=True):
             st.markdown("<h2 style='text-align: center;'>Reset Password</h2>", unsafe_allow_html=True)
             
-            from auth import verify_reset_token
+            from backend.auth import verify_reset_token
             email = verify_reset_token(token)
             
             if not email:
