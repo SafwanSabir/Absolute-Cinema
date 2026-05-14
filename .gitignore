@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+cinema.db
+.env
+.DS_Store
