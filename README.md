@@ -45,9 +45,13 @@ The project is modularized into distinct directories for maintainability and cle
    ```bash
    python -m backend.init_db
    ```
-5. Start the Streamlit application from the root directory:
+5. Start the FastAPI backend server on port 8000:
    ```bash
-   python -m streamlit run frontend/app.py
+   uvicorn backend.src.main:app --reload
+   ```
+6. In a separate terminal, start the Streamlit application:
+   ```bash
+   streamlit run frontend/app.py
    ```
 
 ## Configuration
