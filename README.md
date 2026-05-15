@@ -14,7 +14,8 @@ Absolute Cinema is a full-stack movie seat reservation system: user authenticati
 | `db/` | Local SQLite file when using default `DATABASE_URL` (e.g. `db/cinema.db`) |
 | `assets/` | Optional logo and favicon for the UI |
 | `docker/` | `Dockerfile.api`, `Dockerfile.web` |
-| `requirements.txt` | Full dependencies for local dev and the API image |
+| `requirements.txt` | Full dependencies for local dev (pulls in both files below) |
+| `requirements-api.txt` | Slim dependencies for the API (FastAPI) image |
 | `requirements-web.txt` | Slim dependencies for the web (Streamlit) image |
 | `docker-compose.yml` | Run API + web together |
 
@@ -81,7 +82,7 @@ The compose file sets `API_BASE_URL=http://api:8000` for server-side calls from 
 
 The compose file mounts your local `./frontend` into the **web** container at `/app/frontend`. Edit any file under `frontend/` on the host and Streamlit's auto-rerun picks it up — just refresh the browser tab. No `--build` needed.
 
-You only need to rebuild the **web** image when `requirements-web.txt` changes:
+You only need to rebuild the **web** image when `requirements-web.txt` changes (and the **api** image when `requirements-api.txt` changes):
 
 ```bash
 docker compose up -d --build web
