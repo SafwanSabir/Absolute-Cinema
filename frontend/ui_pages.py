@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime, timedelta, timezone
 import streamlit.components.v1 as components
-from frontend import api_client
+import api_client
 
 def render_home(go_to_page):
     st.header("Now Showing")

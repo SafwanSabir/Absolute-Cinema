@@ -1,8 +1,16 @@
 # pyrefly: ignore [missing-import]
+import sys
+import os
+
+# Streamlit runs this file as a script; add this folder so sibling modules resolve.
+_frontend_dir = os.path.dirname(os.path.abspath(__file__))
+if _frontend_dir not in sys.path:
+    sys.path.insert(0, _frontend_dir)
+
 import streamlit as st
 import base64
-from frontend import ui_pages
-from frontend import api_client
+import api_client
+import ui_pages
 
 st.set_page_config(page_title="Absolute Cinema", page_icon="assets/tab-transparent.png", layout="wide")
 
