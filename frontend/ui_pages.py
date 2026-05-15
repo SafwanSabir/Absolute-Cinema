@@ -237,11 +237,11 @@ def render_checkout(go_to_page, user):
     
     if st.button("Pay with Stripe"):
         try:
-            url = api_client.create_checkout_session(reservation["id"])
+            url, err = api_client.create_checkout_session(reservation["id"])
             if url:
                 st.markdown(f'<meta http-equiv="refresh" content="0; url={url}">', unsafe_allow_html=True)
             else:
-                st.error("Error creating Checkout session.")
+                st.error(err or "Error creating Checkout session.")
         except Exception as e:
             st.error(f"Error creating Stripe Checkout session: {str(e)}")
 

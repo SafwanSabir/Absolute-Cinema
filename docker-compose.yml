@@ -1,0 +1,36 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: sqlite:////data/cinema.db
+      FRONTEND_BASE_URL: http://localhost:8501
+    volumes:
+      - cinema_data:/data
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.web
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    environment:
+      API_BASE_URL: http://api:8000
+    volumes:
+      # Live-reload: edit files in ./frontend on the host, Streamlit picks up changes.
+      - ./frontend:/app/frontend
+      # Static images (logo, favicon) used by the UI.
+      - ./assets:/app/assets:ro
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  cinema_data:

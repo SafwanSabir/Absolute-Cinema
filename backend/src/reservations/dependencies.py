@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException, status
 # pyrefly: ignore [missing-import]
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from backend.src.database import get_db
 from backend.src.reservations.models import Seat, Reservation
 from backend.src.auth.dependencies import get_current_user
@@ -13,7 +13,12 @@ def valid_seat_id(seat_id: int, db: Session = Depends(get_db)):
     return seat
 
 def valid_reservation(res_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    res = db.query(Reservation).filter(Reservation.id == res_id, Reservation.user_id == current_user.id).first()
+    res = (
+        db.query(Reservation)
+        .options(joinedload(Reservation.seat), joinedload(Reservation.movie))
+        .filter(Reservation.id == res_id, Reservation.user_id == current_user.id)
+        .first()
+    )
     if not res:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Reservation not found or does not belong to you")
     return res

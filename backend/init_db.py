@@ -1,6 +1,7 @@
 from backend.src.database import SessionLocal, engine, Base
 from backend.src.auth.models import User
 from backend.src.reservations.models import Seat
+from backend.src.movies.models import Movie
 from backend.src.auth.service import get_password_hash
 
 def init():
@@ -29,7 +30,6 @@ def init():
         print("Created sample seats (A1 to D6)")
     
     # Create sample movies if none exist
-    from backend.src.movies.models import Movie
     import random
     from datetime import datetime, timedelta
 

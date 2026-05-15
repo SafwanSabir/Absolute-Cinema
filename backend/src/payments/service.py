@@ -1,14 +1,15 @@
 # pyrefly: ignore [missing-import]
 import stripe
-import os
+from backend.src.config import settings
 
-stripe.api_key = os.getenv("STRIPE_API_KEY", "")
+stripe.api_key = settings.STRIPE_API_KEY
 
 CORNER_SEAT_PRICE = 15.0
 REGULAR_SEAT_PRICE = 10.0
 
 def create_stripe_checkout(reservation):
     price = CORNER_SEAT_PRICE if reservation.seat.is_corner else REGULAR_SEAT_PRICE
+    base = settings.FRONTEND_BASE_URL.rstrip("/")
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
         line_items=[{
@@ -22,7 +23,7 @@ def create_stripe_checkout(reservation):
             'quantity': 1,
         }],
         mode='payment',
-        success_url='http://localhost:8501/?session_id={CHECKOUT_SESSION_ID}&res_id=' + str(reservation.id) + '&status=success',
-        cancel_url='http://localhost:8501/?res_id=' + str(reservation.id) + '&status=cancel',
+        success_url=base + '/?session_id={CHECKOUT_SESSION_ID}&res_id=' + str(reservation.id) + '&status=success',
+        cancel_url=base + '/?res_id=' + str(reservation.id) + '&status=cancel',
     )
     return session.url

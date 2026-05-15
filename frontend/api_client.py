@@ -1,9 +1,11 @@
+import os
 import requests
 # pyrefly: ignore [missing-import]
 import streamlit as st
 from datetime import datetime
 
-BASE_URL = "http://localhost:8000"
+# In Docker Compose, set API_BASE_URL=http://api:8000 (service name + internal port)
+BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:8000").rstrip("/")
 
 def get_headers():
     headers = {}
@@ -93,7 +95,16 @@ def get_my_reservations():
 
 def create_checkout_session(res_id):
     response = requests.post(f"{BASE_URL}/payments/checkout/{res_id}", headers=get_headers())
-    return response.json().get("url") if response.status_code == 200 else None
+    if response.status_code == 200:
+        return response.json().get("url"), None
+    try:
+        body = response.json()
+        detail = body.get("detail", response.text)
+        if isinstance(detail, list):
+            detail = "; ".join(str(x) for x in detail)
+    except Exception:
+        detail = response.text[:500] if response.text else f"HTTP {response.status_code}"
+    return None, detail
 
 def confirm_payment(res_id):
     response = requests.post(f"{BASE_URL}/payments/confirm/{res_id}", headers=get_headers())

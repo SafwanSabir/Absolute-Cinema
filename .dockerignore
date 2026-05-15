@@ -1,0 +1,12 @@
+venv/
+.git/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.env
+.DS_Store
+*.md
+.cursor/
+db/*.db
+terminals/

@@ -8,6 +8,7 @@ from backend.src.auth.dependencies import get_current_user
 from backend.src.auth.models import User
 from backend.src.movies.dependencies import valid_movie_id
 from backend.src.movies.models import Movie
+from backend.src.movies.service import get_movie_details
 from backend.src.reservations.models import Reservation, Seat
 
 router = APIRouter(prefix="/reservations", tags=["reservations"])
@@ -23,15 +24,19 @@ def check_seat_availability(movie: Movie = Depends(valid_movie_id), seat: Seat =
 
 @router.post("/", response_model=schemas.ReservationResponse, status_code=201)
 def book_seat(
-    req: schemas.ReservationCreate, 
+    req: schemas.ReservationCreate,
     current_user: User = Depends(get_current_user),
-    movie: Movie = Depends(valid_movie_id),
-    seat: Seat = Depends(dependencies.valid_seat_id),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
+    movie = get_movie_details(db, req.movie_id)
+    if not movie:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Movie not found")
+    seat = db.query(Seat).filter(Seat.id == req.seat_id).first()
+    if not seat:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Seat not found")
     if not service.is_seat_available(db, movie.id, seat.id):
         raise HTTPException(status_code=400, detail="Seat is no longer available")
-    
+
     res = service.book_seat_pending(db, current_user.id, movie.id, seat.id)
     return res
 
